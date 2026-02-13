@@ -5,6 +5,7 @@ import { useCallback, useState } from "react";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { useChat } from "@/hooks/use-chat";
+import { useFolders } from "@/hooks/use-folders";
 
 import { ChatHeader } from "./chat-header";
 import { ChatInput } from "./chat-input";
@@ -24,7 +25,10 @@ export function ChatLayout() {
     createNewChat,
     renameConversation,
     deleteConversation,
+    moveToFolder,
   } = useChat();
+
+  const { folders, addFolder } = useFolders();
 
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
@@ -38,17 +42,27 @@ export function ChatLayout() {
     setIsMobileOpen(false);
   }, []);
 
+  const handleCreateFolder = useCallback(
+    (name: string) => {
+      addFolder(name);
+    },
+    [addFolder],
+  );
+
   const hasMessages = messages.length > 0 || isStreaming;
 
   return (
     <div className="flex h-screen">
       <ChatSidebar
         conversations={conversations}
+        folders={folders}
         activeConversationId={activeConversationId}
         onSelectConversation={selectConversation}
         onNewChat={createNewChat}
         onRenameConversation={renameConversation}
         onDeleteConversation={deleteConversation}
+        onCreateFolder={handleCreateFolder}
+        onMoveToFolder={moveToFolder}
         isMobileOpen={isMobileOpen}
         onMobileClose={closeMobile}
       />

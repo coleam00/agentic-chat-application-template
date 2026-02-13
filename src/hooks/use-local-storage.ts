@@ -6,6 +6,7 @@ interface LocalStorageItem {
   id: string;
   title: string;
   updatedAt: string;
+  folderId?: string | undefined;
 }
 
 export function useLocalStorage(key: string) {

@@ -240,6 +240,13 @@ export function useChat() {
     [activeConversationId, removeItem],
   );
 
+  const moveToFolder = useCallback(
+    (conversationId: string, folderId: string | null) => {
+      updateItem(conversationId, { folderId: folderId ?? undefined });
+    },
+    [updateItem],
+  );
+
   return {
     conversations,
     activeConversationId,
@@ -252,5 +259,6 @@ export function useChat() {
     createNewChat,
     renameConversation,
     deleteConversation,
+    moveToFolder,
   };
 }
