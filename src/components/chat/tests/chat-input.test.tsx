@@ -1,5 +1,5 @@
 import { describe, expect, it, mock } from "bun:test";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { ChatInput } from "../chat-input";
@@ -64,5 +64,44 @@ describe("ChatInput", () => {
     await user.click(screen.getByRole("button", { name: "Send message" }));
 
     expect(onSend).not.toHaveBeenCalled();
+  });
+
+  it("shows character count indicator", () => {
+    render(<ChatInput onSend={() => {}} disabled={false} />);
+    expect(screen.getByLabelText("Character count")).toBeInTheDocument();
+    expect(screen.getByLabelText("Character count")).toHaveTextContent("0 / 4000");
+  });
+
+  it("updates character count as user types", async () => {
+    const user = userEvent.setup();
+    render(<ChatInput onSend={() => {}} disabled={false} />);
+
+    const textarea = screen.getByPlaceholderText("Type a message...");
+    await user.type(textarea, "Hello");
+
+    expect(screen.getByLabelText("Character count")).toHaveTextContent("5 / 4000");
+  });
+
+  it("disables send button when over 4000 characters", () => {
+    const onSend = mock(() => {});
+    render(<ChatInput onSend={onSend} disabled={false} />);
+
+    const textarea = screen.getByPlaceholderText("Type a message...");
+    // Use fireEvent for large input to avoid userEvent timeout
+    fireEvent.change(textarea, { target: { value: "a".repeat(4001) } });
+
+    expect(screen.getByRole("button", { name: "Send message" })).toBeDisabled();
+  });
+
+  it("clears character count after sending", async () => {
+    const onSend = mock(() => {});
+    const user = userEvent.setup();
+    render(<ChatInput onSend={onSend} disabled={false} />);
+
+    const textarea = screen.getByPlaceholderText("Type a message...");
+    await user.type(textarea, "Hello");
+    await user.click(screen.getByRole("button", { name: "Send message" }));
+
+    expect(screen.getByLabelText("Character count")).toHaveTextContent("0 / 4000");
   });
 });
