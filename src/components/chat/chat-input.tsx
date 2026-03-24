@@ -7,6 +7,9 @@ import { useCallback, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
+const MAX_CHARS = 4000;
+const WARN_CHARS = 3800;
+
 interface ChatInputProps {
   onSend: (content: string) => void;
   disabled: boolean;
@@ -16,9 +19,19 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
   const [value, setValue] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  const charCount = value.length;
+  const isOverLimit = charCount > MAX_CHARS;
+  const isNearLimit = charCount > WARN_CHARS;
+
+  const charCountClass = isOverLimit
+    ? "text-red-500"
+    : isNearLimit
+      ? "text-amber-500"
+      : "text-muted-foreground/50";
+
   const handleSend = useCallback(() => {
     const trimmed = value.trim();
-    if (!trimmed || disabled) {
+    if (!trimmed || disabled || isOverLimit) {
       return;
     }
     onSend(trimmed);
@@ -26,7 +39,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
-  }, [value, disabled, onSend]);
+  }, [value, disabled, isOverLimit, onSend]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -53,7 +66,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
         />
         <Button
           onClick={handleSend}
-          disabled={disabled || !value.trim()}
+          disabled={disabled || !value.trim() || isOverLimit}
           size="icon"
           className="send-button-glow shrink-0"
           aria-label="Send message"
@@ -61,9 +74,12 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
           <Send className="size-4" />
         </Button>
       </div>
-      <p className="text-muted-foreground/50 mt-1.5 text-center text-xs">
-        Enter to send · Shift+Enter for new line
-      </p>
+      <div className="mx-auto mt-1.5 flex max-w-3xl justify-between">
+        <p className="text-muted-foreground/50 text-xs">Enter to send · Shift+Enter for new line</p>
+        <p className={`text-xs ${charCountClass}`} aria-live="polite">
+          {charCount} / {MAX_CHARS}
+        </p>
+      </div>
     </div>
   );
 }
