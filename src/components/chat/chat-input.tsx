@@ -74,9 +74,9 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
           <Send className="size-4" />
         </Button>
       </div>
-      <div className="mx-auto mt-1.5 flex max-w-3xl justify-between">
+      <div className="mx-auto mt-1.5 flex max-w-3xl items-center justify-between">
         <p className="text-muted-foreground/50 text-xs">Enter to send · Shift+Enter for new line</p>
-        <p className={`text-xs ${charCountClass}`} aria-live="polite">
+        <p className={`text-xs ${charCountClass}`} aria-live="polite" aria-label="Character count">
           {charCount} / {MAX_CHARS}
         </p>
       </div>
