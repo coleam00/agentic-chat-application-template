@@ -1,6 +1,6 @@
 "use client";
 
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { Folder, FolderX, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import type { KeyboardEvent } from "react";
 import { useCallback, useRef, useState } from "react";
 
@@ -19,27 +19,42 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
+interface FolderInfo {
+  id: string;
+  name: string;
+}
+
 interface ConversationItemProps {
   id: string;
   title: string;
   isActive: boolean;
+  folders: FolderInfo[];
+  currentFolderId?: string | undefined;
   onSelect: (id: string) => void;
   onRename: (id: string, title: string) => void;
   onDelete: (id: string) => void;
+  onMoveToFolder: (conversationId: string, folderId: string | null) => void;
 }
 
 export function ConversationItem({
   id,
   title,
   isActive,
+  folders,
+  currentFolderId,
   onSelect,
   onRename,
   onDelete,
+  onMoveToFolder,
 }: ConversationItemProps) {
   const [isRenaming, setIsRenaming] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -116,6 +131,34 @@ export function ConversationItem({
             <Pencil className="size-3.5" />
             Rename
           </DropdownMenuItem>
+          {folders.length > 0 && (
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>
+                <Folder className="size-3.5" />
+                Move to folder
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                {currentFolderId && (
+                  <DropdownMenuItem onClick={() => onMoveToFolder(id, null)}>
+                    <FolderX className="size-3.5" />
+                    Remove from folder
+                  </DropdownMenuItem>
+                )}
+                {currentFolderId && folders.length > 0 && <DropdownMenuSeparator />}
+                {folders.map((folder) => (
+                  <DropdownMenuItem
+                    key={folder.id}
+                    onClick={() => onMoveToFolder(id, folder.id)}
+                    disabled={folder.id === currentFolderId}
+                  >
+                    <Folder className="size-3.5" />
+                    {folder.name}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+          )}
+          <DropdownMenuSeparator />
           <DropdownMenuItem variant="destructive" onClick={() => setIsDeleteOpen(true)}>
             <Trash2 className="size-3.5" />
             Delete
