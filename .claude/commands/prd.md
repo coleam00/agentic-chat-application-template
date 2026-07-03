@@ -1,6 +1,6 @@
 ---
 description: Interactive PRD generator - problem-first, hypothesis-driven product spec
-argument-hint: [feature/product idea] (blank = start with questions)
+argument-hint: "[feature/product idea] (blank = start with questions)"
 ---
 
 # Product Requirements Document Generator

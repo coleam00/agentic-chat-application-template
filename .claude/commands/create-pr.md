@@ -1,6 +1,6 @@
 ---
 description: Create a pull request for current branch
-argument-hint: [base-branch]
+argument-hint: "[base-branch]"
 ---
 
 <objective>

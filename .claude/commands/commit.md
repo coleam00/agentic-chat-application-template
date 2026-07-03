@@ -1,6 +1,6 @@
 ---
 allowed-tools: Bash(git add:*), Bash(git status:*), Bash(git diff:*), Bash(git commit:*)
-argument-hint: [files...]
+argument-hint: "[files...]"
 description: Create atomic commit with conventional prefix
 ---
 

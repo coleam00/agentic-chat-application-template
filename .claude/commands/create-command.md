@@ -199,7 +199,7 @@ Aggregate results before proceeding.
 ```markdown
 ---
 description: {What it does in one line}
-argument-hint: {If needed}
+argument-hint: "{If needed}"
 ---
 
 <objective>
@@ -227,7 +227,7 @@ argument-hint: {If needed}
 ```markdown
 ---
 description: {What it does}
-argument-hint: {Input description}
+argument-hint: "{Input description}"
 ---
 
 <objective>
